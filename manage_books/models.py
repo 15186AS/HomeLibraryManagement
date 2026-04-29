@@ -1,50 +1,73 @@
 from django.db import models
+import pytz
 
 # Create your models here.
-
 class Book(models.Model):
-    COVER = [
-        ('Hardcover', 'Hardcover'),
-        ('Paperback', 'Paperback'),
-        ('E-book', 'E-book'),
-        ('Audiobook', 'Audiobook'),
+
+    COVERS = [
+        ('hardcover', 'Hardcover'),
+        ('paperback', 'Paperback'),
+        ('ebook', 'E-book'),
+        ('audiobook', 'Audiobook'),
     ]
-    Language = [
-        ('English', 'English'),
-        ('Spanish', 'Spanish'),
-        ('French', 'French'),
-        ('German', 'German'),
-        ('Chinese', 'Chinese'),
-        ('Japanese', 'Japanese'),
-        ('Other', 'Other'),
+
+    LANGUAGES = [
+        ('english', 'English'),
+        ("polish", 'Polish'),
+        ('spanish', 'Spanish'),
+        ('french', 'French'),
+        ('german', 'German'),
+        ('other', 'Other'),
     ]
+
     title = models.CharField(max_length=200)
     isbn = models.CharField(max_length=20, unique=True)
     publication_date = models.DateField()
     pages = models.IntegerField()
-    cover = models.CharField(max_length=20, choices=COVER)
-    language = models.CharField(max_length=20)
+    cover = models.CharField(max_length=20, choices=COVERS)
+    language = models.CharField(max_length=20, choices=LANGUAGES)
     is_read = models.BooleanField(default=False)
     is_favorite = models.BooleanField(default=False)
+    authors = models.ManyToManyField('Author', related_name='books', blank=True)
+    publisher = models.ForeignKey('Publisher', on_delete=models.RESTRICT)
+    series = models.ForeignKey('Series', on_delete=models.RESTRICT, blank=True, null=True)
+    genres = models.ManyToManyField('Genre', related_name='books', blank=True)
+    topics = models.ManyToManyField('Topic', related_name='books', blank=True)
 
 class Author(models.Model):
-    name = models.CharField(max_length=200)
-    birth_date = models.DateField()
+    TITLES = [
+            ('ks', "Ks."),
+            ('dr', "Dr."),
+            ('prof', "Prof."),
+            ('mr', "Mr."),
+            ('ms', "Ms."),
+        ]
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     nationality = models.CharField(max_length=100)
+    title = models.CharField(max_length=20, choices=TITLES, blank=True, null=True)
+    alias = models.CharField(max_length=100, blank=True, null=True)
 
 class Publisher(models.Model):
     name = models.CharField(max_length=200)
-    founded_date = models.DateField()
-    headquarters = models.CharField(max_length=100)
-
-class Publisher(models.Model):
+    country = models.CharField(max_length=2, choices=pytz.country_names.items())
+    founded_year = models.IntegerField()
+    website = models.URLField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    # books = models.ManyToOneField(Book, related_name='publisher')
 
 class Genre(models.Model):
+    name = models.CharField(max_length=100)
 
-class series(models.Model):
+class Series(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
 
-class Topics(models.Model):
-
-class Category(models.Model):
+class Topic(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
 class Note(models.Model):
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE,)
