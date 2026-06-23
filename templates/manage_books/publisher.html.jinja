@@ -1,1 +1,28 @@
 {% extends "base.html.jinja" %}
+{% block title %}{{ publisher.name }}{% endblock %}
+{% block content %}
+    <section class="w-full grid grid-cols-[1fr_2fr] gap-4 mt-4">
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Dane wydawcy</h3>
+            <p class="mb-2"><span class="font-semibold">Kraj:</span> {{ publisher.get_country_display }}</p>
+            <p class="mb-2"><span class="font-semibold">Rok założenia:</span> {{ publisher.founded_year }}</p>
+            {% if publisher.website %}
+                <p class="mb-2"><span class="font-semibold">Strona:</span> <a href="{{ publisher.website }}" class="text-blue-500 hover:underline">{{ publisher.website }}</a></p>
+            {% endif %}
+            {% if publisher.email %}
+                <p class="mb-2"><span class="font-semibold">E-mail:</span> {{ publisher.email }}</p>
+            {% endif %}
+        </div>
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Książki wydawcy</h3>
+            {% for book in publisher.book_set.all %}
+                <div class="border-b py-2">
+                    <a href="{% url 'book' book.id %}" class="text-blue-500 hover:underline">{{ book.title }}</a>
+                    <p class="text-sm text-gray-600">{{ book.author }}</p>
+                </div>
+            {% empty %}
+                <p class="text-gray-600">Brak książek tego wydawcy.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

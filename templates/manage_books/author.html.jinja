@@ -1,1 +1,27 @@
 {% extends "base.html.jinja" %}
+{% block title %}{{ author.first_name }} {{ author.last_name }}{% endblock %}
+{% block content %}
+    <section class="w-full grid grid-cols-[1fr_2fr] gap-4 mt-4">
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Dane autora</h3>
+            {% if author.title %}
+                <p class="mb-2"><span class="font-semibold">Tytuł:</span> {{ author.get_title_display }}</p>
+            {% endif %}
+            {% if author.alias %}
+                <p class="mb-2"><span class="font-semibold">Pseudonim:</span> {{ author.alias }}</p>
+            {% endif %}
+            <p class="mb-2"><span class="font-semibold">Narodowość:</span> {{ author.nationality }}</p>
+        </div>
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Książki autora</h3>
+            {% for book in author.books.all %}
+                <div class="border-b py-2">
+                    <a href="{% url 'book' book.id %}" class="text-blue-500 hover:underline">{{ book.title }}</a>
+                    <p class="text-sm text-gray-600">{{ book.publication_date }}</p>
+                </div>
+            {% empty %}
+                <p class="text-gray-600">Brak książek tego autora.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

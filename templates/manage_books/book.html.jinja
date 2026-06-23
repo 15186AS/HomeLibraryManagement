@@ -1,1 +1,40 @@
 {% extends "base.html.jinja" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+    <section class="w-full grid grid-cols-[2fr_1fr] gap-4 mt-4">
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Informacje o książce</h3>
+            <p class="mb-2"><span class="font-semibold">Autorzy:</span> {{ book.author|default:"Brak autorów" }}</p>
+            <p class="mb-2"><span class="font-semibold">ISBN:</span> {{ book.isbn }}</p>
+            <p class="mb-2"><span class="font-semibold">Data publikacji:</span> {{ book.publication_date }}</p>
+            <p class="mb-2"><span class="font-semibold">Liczba stron:</span> {{ book.pages }}</p>
+            <p class="mb-2"><span class="font-semibold">Oprawa:</span> {{ book.get_cover_display }}</p>
+            <p class="mb-2"><span class="font-semibold">Język:</span> {{ book.get_language_display }}</p>
+            <p class="mb-2"><span class="font-semibold">Przeczytana:</span> {% if book.is_read %}tak{% else %}nie{% endif %}</p>
+            <p class="mb-2"><span class="font-semibold">Ulubiona:</span> {% if book.is_favorite %}tak{% else %}nie{% endif %}</p>
+        </div>
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Powiązania</h3>
+            <p class="mb-2"><span class="font-semibold">Wydawca:</span> <a href="{% url 'publisher' book.publisher.id %}" class="text-blue-500 hover:underline">{{ book.publisher.name }}</a></p>
+            {% if book.series %}
+                <p class="mb-2"><span class="font-semibold">Seria:</span> <a href="{% url 'series' book.series.id %}" class="text-blue-500 hover:underline">{{ book.series.name }}</a></p>
+            {% endif %}
+            <p class="font-semibold mt-2">Gatunki</p>
+            <ul class="list-disc list-inside mb-2">
+                {% for genre in book.genres.all %}
+                    <li>{{ genre.name }}</li>
+                {% empty %}
+                    <li class="text-gray-600">Brak gatunków</li>
+                {% endfor %}
+            </ul>
+            <p class="font-semibold mt-2">Tematy</p>
+            <ul class="list-disc list-inside">
+                {% for topic in book.topics.all %}
+                    <li>{{ topic.name }}</li>
+                {% empty %}
+                    <li class="text-gray-600">Brak tematów</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endblock %}

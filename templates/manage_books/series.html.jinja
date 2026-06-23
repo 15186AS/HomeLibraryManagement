@@ -1,1 +1,33 @@
 {% extends "base.html.jinja" %}
+{% block title %}{{ series.name }}{% endblock %}
+{% block content %}
+    <section class="w-full grid grid-cols-[1fr_2fr] gap-4 mt-4">
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Opis serii</h3>
+            {% if series.description %}
+                <p class="mb-4">{{ series.description }}</p>
+            {% else %}
+                <p class="text-gray-600 mb-4">Brak opisu serii.</p>
+            {% endif %}
+            <p class="font-semibold">Autorzy serii</p>
+            <ul class="list-disc list-inside">
+                {% for author in series.authors.all %}
+                    <li><a href="{% url 'author' author.id %}" class="text-blue-500 hover:underline">{{ author.first_name }} {{ author.last_name }}</a></li>
+                {% empty %}
+                    <li class="text-gray-600">Brak przypisanych autorów</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Książki w serii</h3>
+            {% for book in series.book_set.all %}
+                <div class="border-b py-2">
+                    <a href="{% url 'book' book.id %}" class="text-blue-500 hover:underline">{{ book.title }}</a>
+                    <p class="text-sm text-gray-600">{{ book.publication_date }}</p>
+                </div>
+            {% empty %}
+                <p class="text-gray-600">Brak książek w tej serii.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

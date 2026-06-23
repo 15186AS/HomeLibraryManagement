@@ -1,0 +1,18 @@
+{% extends "base.html.jinja" %}
+{% block title %}Lista notatek{% endblock %}
+{% block content %}
+    <section class="w-full grid gap-4 mt-4">
+        <div class="flex flex-col bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-md font-semibold mb-2">Notatki</h3>
+            {% for note in notes %}
+                <div class="border-b py-2">
+                    <a href="{% url 'note' note.id %}" class="text-blue-500 hover:underline">{{ note.book.title }}</a>
+                    <p class="text-sm text-gray-600">{{ note.content|truncatechars:120 }}</p>
+                    <p class="text-xs text-gray-500">{{ note.created_at }}</p>
+                </div>
+            {% empty %}
+                <p class="text-gray-600">Brak notatek do wyświetlenia.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
